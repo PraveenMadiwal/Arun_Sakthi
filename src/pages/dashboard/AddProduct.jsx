@@ -1,4 +1,5 @@
 import { useState } from "react";
+import API from "../../services/api";
 import { useDispatch } from "react-redux";
 import { addProduct } from "../../redux/slices/productSlice";
 
@@ -6,81 +7,88 @@ function AddProduct() {
   const dispatch = useDispatch();
 
   const [form, setForm] = useState({
-    name: "",
+    productName: "",
+    category: "",
     description: "",
     price: "",
-    image: "",
+    imageUrl: "",
   });
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    dispatch(
-      addProduct({
-        id: Date.now(),
-        ...form,
-      })
-    );
+    try {
+      const res = await API.post("/products", form);
 
-    alert("Product added!");
+      dispatch(addProduct(res.data)); // ✅ update redux instantly
 
-    setForm({
-      name: "",
-      description: "",
-      price: "",
-      image: "",
-    });
+      alert("Product Added Successfully");
+
+      setForm({
+        productName: "",
+        category: "",
+        description: "",
+        price: "",
+        imageUrl: "",
+      });
+    } catch (err) {
+      console.log(err);
+      alert("Error adding product");
+    }
   };
 
   return (
-    <div className="max-w-2xl bg-white dark:bg-gray-800 p-6 rounded-xl shadow">
+    <div className="max-w-2xl mx-auto bg-white p-6 rounded shadow">
+      <h2 className="text-xl font-bold mb-4">Add Product</h2>
 
-      <h2 className="text-xl font-bold mb-4 text-purple-600">
-        Add New Tool
-      </h2>
-
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-3">
 
         <input
-          name="name"
+          name="productName"
           placeholder="Product Name"
-          value={form.name}
+          value={form.productName}
           onChange={handleChange}
-          className="w-full p-3 border rounded"
+          className="w-full p-2 border"
         />
 
-        <textarea
+        <input
+          name="category"
+          placeholder="Category"
+          value={form.category}
+          onChange={handleChange}
+          className="w-full p-2 border"
+        />
+
+        <input
           name="description"
           placeholder="Description"
           value={form.description}
           onChange={handleChange}
-          className="w-full p-3 border rounded"
+          className="w-full p-2 border"
         />
 
         <input
           name="price"
+          type="number"
           placeholder="Price"
           value={form.price}
           onChange={handleChange}
-          className="w-full p-3 border rounded"
+          className="w-full p-2 border"
         />
 
         <input
-          name="image"
+          name="imageUrl"
           placeholder="Image URL"
-          value={form.image}
+          value={form.imageUrl}
           onChange={handleChange}
-          className="w-full p-3 border rounded"
+          className="w-full p-2 border"
         />
 
-        <button
-          type="submit"
-          className="w-full bg-purple-600 text-white py-2 rounded"
-        >
+        <button className="bg-green-600 text-white px-4 py-2 rounded">
           Add Product
         </button>
 

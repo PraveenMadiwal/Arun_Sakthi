@@ -2,13 +2,15 @@ import { Routes, Route } from "react-router-dom";
 import Header from "./components/Header";
 
 import Home from "./pages/Home";
-// import About from "./pages/About";
-import Tools from "./pages/Tools";
-// import Skills from "./pages/Skills";
-// import Futures from "./pages/Futures";
-// import Contact from "./pages/Contact";
-// import Login from "./pages/Login";
+
+import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
+import DashboardHome from "./pages/dashboard/Home";
+import AddProduct from "./pages/dashboard/AddProduct";
+import Enquiries from "./pages/dashboard/Enquiries";
+
+import ProtectedRoute from "./routes/ProtectedRoute";
+import CategoryProducts from "./pages/CategoryProducts";
 
 function App() {
   return (
@@ -16,14 +18,23 @@ function App() {
       <Header />
 
       <Routes>
+
+        {/* ONLY HOME PAGE */}
         <Route path="/" element={<Home />} />
-        {/* <Route path="/about" element={<About />} /> */}
-        <Route path="/tools" element={<Tools />} />
-        {/* <Route path="/skills" element={<Skills />} />
-        <Route path="/futures" element={<Futures />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/login" element={<Login />} /> */}
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/products/category/:category" element={<CategoryProducts />} />
+
+        {/* AUTH */}
+        <Route path="/login" element={<Login />} />
+
+        {/* DASHBOARD */}
+        <Route element={<ProtectedRoute allowedRoles={["ADMIN"]} />}>
+          <Route path="/dashboard" element={<Dashboard />}>
+            <Route path="dashboardhome" element={<DashboardHome />} />
+            <Route path="add-product" element={<AddProduct />} />
+            <Route path="enquiries" element={<Enquiries />} />
+          </Route>
+        </Route>
+
       </Routes>
     </>
   );

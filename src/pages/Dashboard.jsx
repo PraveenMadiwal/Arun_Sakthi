@@ -20,7 +20,7 @@ function Dashboard() {
 
         <nav className="space-y-3">
 
-          <Link to="/dashboard" className="flex items-center gap-2">
+          <Link to="/dashboard/dashboardhome" className="flex items-center gap-2">
             <FaHome /> Home
           </Link>
 

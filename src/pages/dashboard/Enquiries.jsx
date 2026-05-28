@@ -1,33 +1,41 @@
-import { useSelector } from "react-redux";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import API from "../../services/api";
+import { setEnquiries } from "../../redux/slices/enquirySlice";
 
 function Enquiries() {
+  const dispatch = useDispatch();
   const enquiries = useSelector((state) => state.enquiries.enquiries);
 
-  return (
-    <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow">
+  useEffect(() => {
+    const fetchEnquiries = async () => {
+      try {
+        const res = await API.get("/enquiry");
+        dispatch(setEnquiries(res.data));
+      } catch (err) {
+        console.log(err);
+      }
+    };
 
-      <h2 className="text-xl font-bold mb-4 text-purple-600">
-        User Enquiries
-      </h2>
+    fetchEnquiries();
+  }, [dispatch]);
+
+  return (
+    <div>
+      <h2 className="text-xl font-bold mb-4">Enquiries</h2>
 
       <div className="space-y-3">
-
-        {enquiries.map((e) => (
-          <div
-            key={e.id}
-            className="p-3 border rounded dark:border-gray-700"
-          >
-            <p className="font-semibold">
-              {e.product.name}
-            </p>
-            <p className="text-sm text-gray-500">
-              {e.message}
-            </p>
-          </div>
-        ))}
-
+        {enquiries.length === 0 ? (
+          <p className="text-gray-500">No enquiries found</p>
+        ) : (
+          enquiries.map((e) => (
+            <div key={e.id} className="border p-3 rounded">
+              <p><b>Product:</b> {e.product?.productName || "N/A"}</p>
+              <p>{e.message}</p>
+            </div>
+          ))
+        )}
       </div>
-
     </div>
   );
 }

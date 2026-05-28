@@ -1,121 +1,204 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { FaBars, FaTimes, FaSearch, FaUserCircle } from "react-icons/fa";
+import {
+  FaBars,
+  FaTimes,
+  FaSearch,
+} from "react-icons/fa";
 
 function Header() {
   const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState("");
+
   const location = useLocation();
 
   const isActive = (path) => location.pathname === path;
 
   const navItems = [
     { name: "Home", path: "/" },
-    { name: "About", path: "/about" },
+    { name: "Products", path: "/products" },
     { name: "Tools", path: "/tools" },
-    { name: "Skills", path: "/skills" },
-    { name: "Futures", path: "/futures" },
-    { name: "Contact", path: "/contact" },
+    { name: "Career", path: "/career" },
+    { name: "About Us", path: "/about" },
   ];
 
-  return (
-    <header className="sticky top-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b shadow-sm">
+  // SEARCH FILTER
+  const filteredItems = navItems.filter((item) =>
+    item.name.toLowerCase().includes(search.toLowerCase())
+  );
 
-      <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+  return (
+    <header className="sticky top-0 z-50 bg-[#81864A]  shadow-sm">
+
+      <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
 
         {/* LOGO */}
-        <Link to="/" className="text-xl font-bold text-purple-700 dark:text-white">
-          Arun Sakthi
+        <Link
+          to="/"
+          className="text-xl font-bold text-white whitespace-nowrap"
+        >
+          Saga Manufacturers & Tools
         </Link>
 
         {/* DESKTOP NAV */}
         <nav className="hidden lg:flex items-center gap-8">
+
           {navItems.map((item) => (
             <Link
               key={item.path}
               to={item.path}
               className={`text-sm font-medium transition ${
                 isActive(item.path)
-                  ? "text-purple-700 border-b-2 border-purple-700"
-                  : "text-gray-600 dark:text-gray-300 hover:text-purple-700"
+                  ? "text-white border-b-2 border-white"
+                  : "text-gray-200 hover:text-white"
               }`}
             >
               {item.name}
             </Link>
           ))}
+
         </nav>
 
-        {/* RIGHT ACTIONS */}
-        <div className="flex items-center gap-3">
+        {/* SEARCH */}
+        <div className="relative hidden md:block">
 
-          {/* SEARCH */}
-          <div className="hidden md:flex items-center bg-gray-100 dark:bg-gray-800 px-3 py-2 rounded-lg">
+          <div className="flex items-center bg-white rounded-lg px-3 py-2 w-64">
+
             <FaSearch className="text-gray-500" />
+
             <input
               type="text"
-              placeholder="Search tools..."
-              className="bg-transparent outline-none px-2 text-sm text-gray-700 dark:text-white"
+              placeholder="Search..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full px-2 outline-none text-sm"
             />
+
           </div>
 
-          {/* USER ICON (future admin/vendor panel) */}
-          <button className="text-gray-600 dark:text-white text-xl">
-            <FaUserCircle />
-          </button>
+          {/* SEARCH RESULTS */}
+          {search && (
+            <div className="absolute top-12 left-0 w-full bg-white rounded-lg shadow-lg overflow-hidden z-50">
 
-          {/* LOGIN BUTTON */}
+              {filteredItems.length > 0 ? (
+                filteredItems.map((item) => (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    onClick={() => setSearch("")}
+                    className="block px-4 py-3 text-sm hover:bg-gray-100 text-gray-700"
+                  >
+                    {item.name}
+                  </Link>
+                ))
+              ) : (
+                <p className="px-4 py-3 text-sm text-gray-500">
+                  No data found
+                </p>
+              )}
+
+            </div>
+          )}
+
+        </div>
+
+        {/* RIGHT SIDE */}
+        <div className="flex items-center gap-4">
+
+          {/* LOGIN */}
           <Link
             to="/login"
-            className="hidden sm:block bg-purple-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-purple-700 transition"
+            className="hidden sm:block bg-white text-black px-4 py-2 rounded-lg text-sm font-bold hover:bg-gray-200 transition"
           >
-            Vendor Login
+            Login
           </Link>
 
-          {/* MOBILE MENU BUTTON */}
+          {/* MOBILE MENU */}
           <button
             onClick={() => setOpen(true)}
-            className="lg:hidden text-2xl text-gray-700 dark:text-white"
+            className="lg:hidden text-2xl text-white"
           >
             <FaBars />
           </button>
+
         </div>
       </div>
 
-      {/* MOBILE DRAWER */}
+      {/* MOBILE MENU */}
       {open && (
-        <div className="fixed inset-0 z-50 lg:hidden bg-black/50 flex">
+        <div className="fixed inset-0 z-50 lg:hidden bg-black/40">
 
           {/* BACKDROP */}
           <div
             onClick={() => setOpen(false)}
-            className="absolute inset-0 bg-black-500 bg-blur-sm "
+            className="absolute inset-0"
           />
 
           {/* SIDEBAR */}
-          <div className="absolute left-0 top-0 h-full w-4/5 max-w-sm bg-gray-100 dark:bg-gray-900 p-5 flex flex-col">
+          <div className="absolute left-0 top-0 h-full w-4/5 max-w-sm bg-[#81864A] p-5 flex flex-col">
 
             {/* TOP */}
-            <div className="flex justify-between items-center mb-6">
-              <h1 className="text-lg font-bold text-purple-700 dark:text-white">
-                Arun Sakthi
+            <div className="flex items-center justify-between mb-6">
+
+              <h1 className="text-lg font-bold text-white">
+                Saga Manufacturers & Tools
               </h1>
 
               <button onClick={() => setOpen(false)}>
-                <FaTimes className="text-2xl text-gray-600 dark:text-white" />
+                <FaTimes className="text-2xl text-white" />
               </button>
+
             </div>
 
-            {/* SEARCH */}
-            <div className="flex items-center bg-gray-100 dark:bg-gray-800 px-3 py-2 rounded-lg mb-6">
-              <FaSearch className="text-gray-500" />
-              <input
-                type="text"
-                placeholder="Search tools..."
-                className="bg-transparent outline-none px-2 w-full text-sm text-gray-700 dark:text-white"
-              />
+            {/* MOBILE SEARCH */}
+            <div className="mb-6">
+
+              <div className="flex items-center bg-white rounded-lg px-3 py-2">
+
+                <FaSearch className="text-gray-500" />
+
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="w-full px-2 outline-none text-sm"
+                />
+
+              </div>
+
+              {/* MOBILE SEARCH RESULTS */}
+              {search && (
+                <div className="bg-white rounded-lg mt-2 overflow-hidden">
+
+                  {filteredItems.length > 0 ? (
+                    filteredItems.map((item) => (
+                      <Link
+                        key={item.path}
+                        to={item.path}
+                        onClick={() => {
+                          setSearch("");
+                          setOpen(false);
+                        }}
+                        className="block px-4 py-3 text-sm hover:bg-gray-100 text-gray-700"
+                      >
+                        {item.name}
+                      </Link>
+                    ))
+                  ) : (
+                    <p className="px-4 py-3 text-sm text-gray-500">
+                      No data found
+                    </p>
+                  )}
+
+                </div>
+              )}
+
             </div>
 
-            {/* NAV LINKS */}
-            <nav className="flex flex-col gap-4 bg-gray-200 dark:bg-gray-800 p-4 rounded-lg mb-6">
+            {/* NAVIGATION */}
+            <nav className="flex flex-col gap-4 bg-white p-4 rounded-lg">
+
               {navItems.map((item) => (
                 <Link
                   key={item.path}
@@ -123,29 +206,31 @@ function Header() {
                   onClick={() => setOpen(false)}
                   className={`text-sm font-medium ${
                     isActive(item.path)
-                      ? "text-purple-700"
-                      : "text-gray-700 dark:text-gray-300"
+                      ? "text-[#81864A]"
+                      : "text-gray-700 hover:text-[#81864A]"
                   }`}
                 >
                   {item.name}
                 </Link>
               ))}
+
             </nav>
 
-            {/* BOTTOM ACTIONS */}
-            <div className="mt-auto space-y-3">
+            {/* BOTTOM */}
+            <div className="mt-auto">
 
               <Link
                 to="/login"
                 onClick={() => setOpen(false)}
-                className="block text-center bg-purple-600 text-white py-2 rounded-lg"
+                className="block text-center bg-white text-black py-2 rounded-lg font-bold hover:bg-gray-200 transition"
               >
-                Vendor Login
+                Login
               </Link>
 
-              <p className="text-xs text-center text-gray-400">
-                SaaS Portfolio © Praveen Kumar @ 2024
+              <p className="text-xs text-center text-white mt-4">
+                © Praveen Kumar 2024
               </p>
+
             </div>
           </div>
         </div>
