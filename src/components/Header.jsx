@@ -1,19 +1,25 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import {
-  FaBars,
-  FaTimes,
-  FaSearch,
-} from "react-icons/fa";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { FaBars, FaTimes, FaSearch } from "react-icons/fa";
 
 function Header() {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
 
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const token = localStorage.getItem("token");
+  const role = localStorage.getItem("role");
+
+  const isLoggedIn = !!token;
+
+  // ✅ IMPORTANT FIX HERE
+  const isAdmin = role === "ROLE_ADMIN";
 
   const isActive = (path) => location.pathname === path;
 
+  // ❌ DO NOT include Dashboard here
   const navItems = [
     { name: "Home", path: "/" },
     { name: "Products", path: "/products" },
@@ -22,32 +28,37 @@ function Header() {
     { name: "About Us", path: "/about" },
   ];
 
-  // SEARCH FILTER
   const filteredItems = navItems.filter((item) =>
     item.name.toLowerCase().includes(search.toLowerCase())
   );
 
-  return (
-    <header className="sticky top-0 z-50 bg-[#81864A]  shadow-sm">
+  const handleNavigate = (path) => {
+    setSearch("");
+    setOpen(false);
+    navigate(path);
+  };
 
-      <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+  return (
+    <header className="sticky top-0 z-50 bg-[#81864A] shadow-md">
+
+      <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
 
         {/* LOGO */}
-        <Link
-          to="/"
-          className="text-xl font-bold text-white whitespace-nowrap"
-        >
-          Saga Manufacturers & Tools
+        <Link to="/" className="text-xl font-bold text-white whitespace-nowrap">
+          Saga{" "}
+          <span className="text-xs sm:text-sm text-gray-300 ml-1">
+            Manufacturers & Engineering
+          </span>
         </Link>
 
         {/* DESKTOP NAV */}
-        <nav className="hidden lg:flex items-center gap-8">
+        <nav className="hidden lg:flex items-center gap-6 flex-wrap">
 
           {navItems.map((item) => (
             <Link
               key={item.path}
               to={item.path}
-              className={`text-sm font-medium transition ${
+              className={`text-sm font-medium whitespace-nowrap transition ${
                 isActive(item.path)
                   ? "text-white border-b-2 border-white"
                   : "text-gray-200 hover:text-white"
@@ -57,15 +68,27 @@ function Header() {
             </Link>
           ))}
 
+          {/* ✅ DASHBOARD ONLY FOR ADMIN */}
+          {isLoggedIn && isAdmin && (
+            <Link
+              to="/dashboard/dashboardhome"
+              className={`text-sm font-bold whitespace-nowrap ${
+                location.pathname.includes("/dashboard")
+                  ? "text-yellow-300 border-b-2 border-yellow-300"
+                  : "text-yellow-200 hover:text-white"
+              }`}
+            >
+              Dashboard
+            </Link>
+          )}
+
         </nav>
 
         {/* SEARCH */}
         <div className="relative hidden md:block">
 
           <div className="flex items-center bg-white rounded-lg px-3 py-2 w-64">
-
             <FaSearch className="text-gray-500" />
-
             <input
               type="text"
               placeholder="Search..."
@@ -73,26 +96,23 @@ function Header() {
               onChange={(e) => setSearch(e.target.value)}
               className="w-full px-2 outline-none text-sm"
             />
-
           </div>
 
-          {/* SEARCH RESULTS */}
           {search && (
-            <div className="absolute top-12 left-0 w-full bg-white rounded-lg shadow-lg overflow-hidden z-50">
+            <div className="absolute top-12 left-0 w-full bg-white rounded-lg shadow-lg z-50">
 
               {filteredItems.length > 0 ? (
                 filteredItems.map((item) => (
-                  <Link
+                  <button
                     key={item.path}
-                    to={item.path}
-                    onClick={() => setSearch("")}
-                    className="block px-4 py-3 text-sm hover:bg-gray-100 text-gray-700"
+                    onClick={() => handleNavigate(item.path)}
+                    className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
                   >
                     {item.name}
-                  </Link>
+                  </button>
                 ))
               ) : (
-                <p className="px-4 py-3 text-sm text-gray-500">
+                <p className="px-4 py-2 text-sm text-gray-500">
                   No data found
                 </p>
               )}
@@ -102,18 +122,18 @@ function Header() {
 
         </div>
 
-        {/* RIGHT SIDE */}
-        <div className="flex items-center gap-4">
+        {/* RIGHT */}
+        <div className="flex items-center gap-3">
 
-          {/* LOGIN */}
-          <Link
-            to="/login"
-            className="hidden sm:block bg-white text-black px-4 py-2 rounded-lg text-sm font-bold hover:bg-gray-200 transition"
-          >
-            Login
-          </Link>
+          {!isLoggedIn && (
+            <Link
+              to="/login"
+              className="hidden sm:block bg-white text-black px-3 py-1 rounded-lg text-sm font-bold hover:bg-gray-200"
+            >
+              Login
+            </Link>
+          )}
 
-          {/* MOBILE MENU */}
           <button
             onClick={() => setOpen(true)}
             className="lg:hidden text-2xl text-white"
@@ -128,110 +148,97 @@ function Header() {
       {open && (
         <div className="fixed inset-0 z-50 lg:hidden bg-black/40">
 
-          {/* BACKDROP */}
-          <div
-            onClick={() => setOpen(false)}
-            className="absolute inset-0"
-          />
+          <div onClick={() => setOpen(false)} className="absolute inset-0" />
 
-          {/* SIDEBAR */}
           <div className="absolute left-0 top-0 h-full w-4/5 max-w-sm bg-[#81864A] p-5 flex flex-col">
 
             {/* TOP */}
-            <div className="flex items-center justify-between mb-6">
-
+            <div className="flex justify-between items-center mb-6">
               <h1 className="text-lg font-bold text-white">
-                Saga Manufacturers & Tools
+                Saga{" "}
+                <span className="text-sm text-gray-300 ml-1">
+                  Engineering
+                </span>
               </h1>
 
               <button onClick={() => setOpen(false)}>
                 <FaTimes className="text-2xl text-white" />
               </button>
-
             </div>
 
-            {/* MOBILE SEARCH */}
+            {/* SEARCH */}
             <div className="mb-6">
 
               <div className="flex items-center bg-white rounded-lg px-3 py-2">
-
                 <FaSearch className="text-gray-500" />
-
                 <input
-                  type="text"
-                  placeholder="Search..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="w-full px-2 outline-none text-sm"
+                  placeholder="Search..."
+                  className="w-full px-2 text-sm outline-none"
                 />
-
               </div>
-
-              {/* MOBILE SEARCH RESULTS */}
-              {search && (
-                <div className="bg-white rounded-lg mt-2 overflow-hidden">
-
-                  {filteredItems.length > 0 ? (
-                    filteredItems.map((item) => (
-                      <Link
-                        key={item.path}
-                        to={item.path}
-                        onClick={() => {
-                          setSearch("");
-                          setOpen(false);
-                        }}
-                        className="block px-4 py-3 text-sm hover:bg-gray-100 text-gray-700"
-                      >
-                        {item.name}
-                      </Link>
-                    ))
-                  ) : (
-                    <p className="px-4 py-3 text-sm text-gray-500">
-                      No data found
-                    </p>
-                  )}
-
-                </div>
-              )}
 
             </div>
 
-            {/* NAVIGATION */}
-            <nav className="flex flex-col gap-4 bg-white p-4 rounded-lg">
+            {/* NAV */}
+            <nav className="flex flex-col gap-3 bg-white p-3 rounded-lg">
 
               {navItems.map((item) => (
-                <Link
+                <button
                   key={item.path}
-                  to={item.path}
-                  onClick={() => setOpen(false)}
-                  className={`text-sm font-medium ${
+                  onClick={() => handleNavigate(item.path)}
+                  className={`text-left text-sm ${
                     isActive(item.path)
-                      ? "text-[#81864A]"
-                      : "text-gray-700 hover:text-[#81864A]"
+                      ? "text-[#81864A] font-bold"
+                      : "text-gray-700"
                   }`}
                 >
                   {item.name}
-                </Link>
+                </button>
               ))}
+
+              {/* ✅ DASHBOARD MOBILE */}
+              {isLoggedIn && isAdmin && (
+                <button
+                  onClick={() =>
+                    handleNavigate("/dashboard/dashboardhome")
+                  }
+                  className="text-left text-sm font-bold text-yellow-600"
+                >
+                  Dashboard
+                </button>
+              )}
 
             </nav>
 
-            {/* BOTTOM */}
-            <div className="mt-auto">
+            {/* FOOTER */}
+            <div className="mt-auto text-center">
 
-              <Link
-                to="/login"
-                onClick={() => setOpen(false)}
-                className="block text-center bg-white text-black py-2 rounded-lg font-bold hover:bg-gray-200 transition"
-              >
-                Login
-              </Link>
+              {!isLoggedIn && (
+                <Link
+                  to="/login"
+                  className="block bg-white text-black py-2 rounded-lg font-bold"
+                  onClick={() => setOpen(false)}
+                >
+                  Login
+                </Link>
+              )}
 
-              <p className="text-xs text-center text-white mt-4">
-                © Praveen Kumar 2024
+              <p className="text-xs text-white mt-4">
+                © Developed By{" "}
+                <a
+                  href="https://praveenwebpage.netlify.app/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-semibold hover:text-yellow-300"
+                >
+                  Praveen Kumar M S
+                </a>
               </p>
 
             </div>
+
           </div>
         </div>
       )}

@@ -38,19 +38,27 @@ function Products() {
 
       {Object.keys(grouped).map((category) => {
 
-        const items = grouped[category].slice(0, 3);
-        const hasMore = grouped[category].length > 3;
+        const items = grouped[category].slice(0, 4);
+        const hasMore = grouped[category].length > 4;
 
         return (
-          <div key={category} className="mb-8 border-b pb-4">
+          <div key={category} className="mb-8 pb-4">
 
             {/* CATEGORY HEADER */}
             <div className="flex justify-between items-center mb-3">
-              <h2 className="text-xl font-bold">{category}</h2>
+              <h2 className="text-xl font-bold text-[#81864A]">{category}</h2>
             </div>
 
             {/* SINGLE LINE ROW */}
-            <div className="flex gap-4 overflow-hidden">
+            <div
+                  className="
+                   flex gap-2
+                   overflow-x-auto
+                   scroll-smooth
+                   pb-2
+                   -mx-2 px-2 scrollbar-hide
+                   touch-pan-x
+                 ">
 
               {/* PRODUCTS */}
               {items.map((product) => (

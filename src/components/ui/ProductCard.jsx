@@ -1,14 +1,15 @@
 import { useState } from "react";
 import { FaRupeeSign } from "react-icons/fa";
+import EnquiryModal from "./EnquiryModal";
 
-function ProductCard({ product, onEnquire, onView }) {
+function ProductCard({ product, onView }) {
 
-  // convert backend string → array
   const images = product.imageUrl?.includes(",")
     ? product.imageUrl.split(",")
     : [product.imageUrl];
 
   const [index, setIndex] = useState(0);
+  const [openEnquiry, setOpenEnquiry] = useState(false);
 
   const nextImage = (e) => {
     e.stopPropagation();
@@ -23,67 +24,55 @@ function ProductCard({ product, onEnquire, onView }) {
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden">
 
-      {/* IMAGE SLIDER */}
+      {/* IMAGE */}
       <div
-        className="relative h-48 bg-gray-100 dark:bg-gray-900 flex items-center justify-center cursor-pointer"
+        className="relative h-48 flex items-center justify-center cursor-pointer"
         onClick={() => onView?.(product)}
       >
-
         <img
           src={images[index]}
-          alt={product.productName}
           className="h-full w-full object-contain"
         />
 
-        {/* LEFT BUTTON */}
         {images.length > 1 && (
-          <button
-            onClick={prevImage}
-            className="absolute left-2 bg-black/40 text-white px-2 rounded"
-          >
-            ‹
-          </button>
-        )}
-
-        {/* RIGHT BUTTON */}
-        {images.length > 1 && (
-          <button
-            onClick={nextImage}
-            className="absolute right-2 bg-black/40 text-white px-2 rounded"
-          >
-            ›
-          </button>
+          <>
+            <button onClick={prevImage} className="absolute left-2 bg-black/40 text-white px-2">‹</button>
+            <button onClick={nextImage} className="absolute right-2 bg-black/40 text-white px-2">›</button>
+          </>
         )}
       </div>
 
       {/* CONTENT */}
       <div className="p-4 space-y-2">
 
-        <h2 className="text-lg font-semibold dark:text-white truncate">
-          {product.productName}
-        </h2>
+        <h2 className="font-semibold">{product.productName}</h2>
 
         <p className="text-sm text-gray-500 line-clamp-2">
           {product.description}
         </p>
 
-        <p className="text-xs text-gray-400">
-          Category: {product.category}
-        </p>
-
         <div className="flex items-center text-purple-700 font-bold">
           <FaRupeeSign />
-          <span className="ml-1">{product.price}</span>
+          {product.price}
         </div>
 
         <button
-          onClick={() => onEnquire(product)}
-          className="w-full bg-purple-600 text-white py-1 rounded-lg hover:bg-purple-700"
+          onClick={() => setOpenEnquiry(true)}
+          className="w-full bg-purple-600 text-white py-2 rounded"
         >
           Enquire
         </button>
 
       </div>
+
+      {/* POPUP */}
+      {openEnquiry && (
+        <EnquiryModal
+          product={product}
+          onClose={() => setOpenEnquiry(false)}
+        />
+      )}
+
     </div>
   );
 }

@@ -1,6 +1,13 @@
 import { useState } from "react";
 import { Link, Outlet } from "react-router-dom";
-import { FaBox, FaPlus, FaEnvelope, FaHome, FaBars } from "react-icons/fa";
+import {
+  FaBox,
+  FaPlus,
+  FaEnvelope,
+  FaHome,
+  FaBars,
+  FaVideo
+} from "react-icons/fa";
 
 function Dashboard() {
   const [open, setOpen] = useState(false);
@@ -14,26 +21,55 @@ function Dashboard() {
           open ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         }`}
       >
-        <h2 className="text-xl font-bold text-purple-600">
-          Vendor Panel
-        </h2>
+        <div className="flex justify-between items-center">
+          <h2 className="text-xl font-bold text-[#81864A]">
+            Vendor Panel
+          </h2>
+        
+          <button
+            onClick={() => setOpen(false)}
+            className="lg:hidden text-xl"
+          >
+            <FaTimes />
+          </button>
+        </div>
 
-        <nav className="space-y-3">
+        <nav className="space-y-3 text-gray-700 dark:text-white">
 
-          <Link to="/dashboard/dashboardhome" className="flex items-center gap-2">
+          <Link
+            to="/dashboard/dashboardhome"
+            className="flex items-center gap-2 hover:text-purple-600"
+          >
             <FaHome /> Home
           </Link>
 
-          <Link to="/dashboard/add-product" className="flex items-center gap-2">
+          <Link
+            to="/dashboard/add-product"
+            className="flex items-center gap-2 hover:text-purple-600"
+          >
             <FaPlus /> Add Product
           </Link>
 
-          <Link to="/dashboard/products" className="flex items-center gap-2">
+          <Link
+            to="/dashboard/products"
+            className="flex items-center gap-2 hover:text-purple-600"
+          >
             <FaBox /> Products
           </Link>
 
-          <Link to="/dashboard/enquiries" className="flex items-center gap-2">
+          <Link
+            to="/dashboard/enquiries"
+            className="flex items-center gap-2 hover:text-purple-600"
+          >
             <FaEnvelope /> Enquiries
+          </Link>
+
+          {/* ✅ NEW: LAUNCH VIDEO */}
+          <Link
+            to="/dashboard/launch-video"
+            className="flex items-center gap-2 hover:text-purple-600 font-semibold"
+          >
+            <FaVideo /> Launch Video
           </Link>
 
         </nav>
