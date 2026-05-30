@@ -1,10 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaBars, FaTimes, FaSearch } from "react-icons/fa";
+import { searchWebsite } from "../services/searchService";
 
 function Header() {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -28,9 +31,38 @@ function Header() {
     { name: "About Us", path: "/about" },
   ];
 
-  const filteredItems = navItems.filter((item) =>
-    item.name.toLowerCase().includes(search.toLowerCase())
-  );
+  useEffect(() => {
+
+  const delay = setTimeout(async () => {
+
+    if (!search.trim()) {
+      setResults([]);
+      return;
+    }
+
+    try {
+
+      setLoading(true);
+
+      const data = await searchWebsite(search);
+
+      setResults(data);
+
+    } catch (error) {
+
+      console.log("Search Error", error);
+
+    } finally {
+
+      setLoading(false);
+
+    }
+
+  }, 300);
+
+  return () => clearTimeout(delay);
+
+}, [search]);
 
   const handleNavigate = (path) => {
     setSearch("");
@@ -99,26 +131,48 @@ function Header() {
           </div>
 
           {search && (
-            <div className="absolute top-12 left-0 w-full bg-white rounded-lg shadow-lg z-50">
+  <div className="absolute top-12 left-0 w-full bg-white rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
 
-              {filteredItems.length > 0 ? (
-                filteredItems.map((item) => (
-                  <button
-                    key={item.path}
-                    onClick={() => handleNavigate(item.path)}
-                    className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
-                  >
-                    {item.name}
-                  </button>
-                ))
-              ) : (
-                <p className="px-4 py-2 text-sm text-gray-500">
-                  No data found
-                </p>
-              )}
+    {loading ? (
 
-            </div>
-          )}
+      <div className="p-3 text-sm">
+        Searching...
+      </div>
+
+    ) : results.length > 0 ? (
+
+      results.map((item, index) => (
+
+        <button
+          key={index}
+          onClick={() => {
+            navigate(item.path);
+            setSearch("");
+            setResults([]);
+          }}
+          className="block w-full text-left px-4 py-3 border-b hover:bg-gray-100"
+        >
+          <div className="font-medium">
+            {item.title}
+          </div>
+
+          <div className="text-xs text-gray-500">
+            {item.type}
+          </div>
+        </button>
+
+      ))
+
+    ) : (
+
+      <div className="p-3 text-sm text-gray-500">
+        No Results Found
+      </div>
+
+    )}
+
+  </div>
+)}
 
         </div>
 
@@ -167,19 +221,49 @@ function Header() {
             </div>
 
             {/* SEARCH */}
-            <div className="mb-6">
+            {search && (
+  <div className="bg-white rounded-lg mt-2 overflow-hidden">
 
-              <div className="flex items-center bg-white rounded-lg px-3 py-2">
-                <FaSearch className="text-gray-500" />
-                <input
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Search..."
-                  className="w-full px-2 text-sm outline-none"
-                />
-              </div>
+    {loading ? (
 
-            </div>
+      <div className="p-3 text-sm">
+        Searching...
+      </div>
+
+    ) : results.length > 0 ? (
+
+      results.map((item, index) => (
+
+        <button
+          key={index}
+          onClick={() => {
+            handleNavigate(item.path);
+            setResults([]);
+          }}
+          className="block w-full text-left px-4 py-3 border-b"
+        >
+          <div className="font-medium">
+            {item.title}
+          </div>
+
+          <div className="text-xs text-gray-500">
+            {item.type}
+          </div>
+        </button>
+
+      ))
+
+    ) : (
+
+      <div className="p-3 text-sm text-gray-500">
+        No Results Found
+      </div>
+
+    )}
+
+  </div>
+)}
+
 
             {/* NAV */}
             <nav className="flex flex-col gap-3 bg-white p-3 rounded-lg">

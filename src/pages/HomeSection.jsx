@@ -1,10 +1,5 @@
 import About from "./About";
 import Tools from "./Tools";
-import Services from "./Services";
-import Skills from "./Skills";
-import Furniture from "./futures/Furniture";
-import Designs from "./futures/Designs";
-import Others from "./futures/Others";
 import Products from "./Products";
 
 function HomeSections() {

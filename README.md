@@ -15,60 +15,7 @@ The React Compiler is not enabled on this template because of its impact on dev 
 
 If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
 
-```
-frontend
-├─ eslint.config.js
-├─ index.html
-├─ package-lock.json
-├─ package.json
-├─ postcss.config.js
-├─ public
-│  ├─ favicon.svg
-│  └─ icons.svg
-├─ README.md
-├─ src
-│  ├─ App.css
-│  ├─ App.jsx
-│  ├─ assets
-│  │  ├─ hero.png
-│  │  ├─ react.svg
-│  │  └─ vite.svg
-│  ├─ components
-│  │  ├─ Footer.jsx
-│  │  ├─ Header.jsx
-│  │  ├─ Loader.jsx
-│  │  ├─ MobileMenu.jsx
-│  │  ├─ ProductCard.jsx
-│  │  ├─ SearchBar.jsx
-│  │  └─ ui
-│  │     └─ ProductCard.jsx
-│  ├─ index.css
-│  ├─ main.jsx
-│  ├─ pages
-│  │  ├─ About.jsx
-│  │  ├─ Contact.jsx
-│  │  ├─ dashboard
-│  │  │  ├─ AddProduct.jsx
-│  │  │  ├─ Enquiries.jsx
-│  │  │  └─ Home.jsx
-│  │  ├─ Dashboard.jsx
-│  │  ├─ Futures.jsx
-│  │  ├─ Home.jsx
-│  │  ├─ Login.jsx
-│  │  ├─ Skills.jsx
-│  │  └─ Tools.jsx
-│  ├─ redux
-│  │  ├─ slices
-│  │  │  ├─ authSlice.js
-│  │  │  ├─ enquirySlice.js
-│  │  │  ├─ productSlice.js
-│  │  │  └─ uiSlice.js
-│  │  └─ store.js
-│  ├─ routes
-│  └─ services
-│     └─ api.js
-├─ tailwind.config.js
-└─ vite.config.js
+
 
 
 ```

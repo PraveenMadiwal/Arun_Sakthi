@@ -23,10 +23,16 @@ function Products() {
     fetchData();
   }, [dispatch]);
 
-  const handleDelete = async (id) => {
+ const handleDelete = async (id) => {
+  try {
     await API.delete(`/products/${id}`);
     dispatch(deleteProduct(id));
-  };
+    alert("Product Deleted Successfully");
+  } catch (error) {
+    console.error(error);
+    alert("Delete Failed");
+  }
+};
 
   const handleUpdated = (updatedProduct) => {
     const updatedList = products.map((p) =>

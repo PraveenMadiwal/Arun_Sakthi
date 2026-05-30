@@ -6,7 +6,8 @@ import {
   FaEnvelope,
   FaHome,
   FaBars,
-  FaVideo
+  FaVideo,
+  FaTimes
 } from "react-icons/fa";
 
 function Dashboard() {
